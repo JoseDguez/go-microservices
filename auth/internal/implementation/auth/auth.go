@@ -53,7 +53,14 @@ func (this *Implementation) GetToken(ctx context.Context, credentials *pb.Creden
 }
 
 func (this *Implementation) ValidateToken(ctx context.Context, token *pb.Token) (*pb.User, error) {
-	return &pb.User{}, nil
+	key := []byte(os.Getenv("SIGNING_KEY"))
+
+	userID, err := validateJWT(token.GetJwt(), key)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.User{UserId: userID}, nil
 }
 
 func createJWT(userID string) (string, error) {
@@ -73,4 +80,28 @@ func createJWT(userID string) (string, error) {
 	}
 
 	return signedToken, nil
+}
+
+func validateJWT(signedToken string, key []byte) (string, error) {
+	type MyClaims struct {
+		jwt.RegisteredClaims
+	}
+
+	parsedToken, err := jwt.ParseWithClaims(signedToken, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return key, nil
+	})
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return "", status.Error(codes.Unauthenticated, "token expired")
+		} else {
+			return "", status.Error(codes.Unauthenticated, "unauthenticated")
+		}
+	}
+
+	claims, ok := parsedToken.Claims.(*MyClaims)
+	if !ok {
+		return "", status.Error(codes.Internal, "claims type assertion failed")
+	}
+
+	return claims.RegisteredClaims.Subject, nil
 }
