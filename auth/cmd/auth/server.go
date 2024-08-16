@@ -12,9 +12,9 @@ import (
 
 const (
 	dbDriver   = "mysql"
-	dbUser     = "root"
-	dbPassword = "password"
-	dbName     = "user"
+	dbUser     = "auth_user"
+	dbPassword = "Admin123"
+	dbName     = "auth"
 )
 
 var db *sql.DB
