@@ -3,8 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/JoseDguez/go-microservices/internal/implementation/money_movement"
+	pb "github.com/JoseDguez/go-microservices/proto"
 	"google.golang.org/grpc"
 	"log"
+	"net"
 )
 
 const (
@@ -41,4 +44,17 @@ func main() {
 
 	// grpc server setup
 	grpcServer := grpc.NewServer()
+	moneyMovementServerImplementation := money_movement.NewMoneyMovementImplementation(db)
+	pb.RegisterMoneyMovementServiceServer(grpcServer, moneyMovementServerImplementation)
+
+	// listen & serve
+	listener, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		log.Fatalf("Failed to listen on port 50052: %v", err)
+	}
+
+	log.Printf("Server listening at :%v", listener.Addr())
+	if err = grpcServer.Serve(listener); err != nil {
+		log.Fatalf("Failed to serve gRPC server over port 50052: %v", err)
+	}
 }
