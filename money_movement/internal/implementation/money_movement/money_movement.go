@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/JoseDguez/go-microservices/internal/producer"
 	pb "github.com/JoseDguez/go-microservices/proto"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -171,6 +172,8 @@ func (this *Implementation) Capture(ctx context.Context, capturePayload *pb.Capt
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+	producer.SendCaptureMessage(authorizedTransaction.pid, authorizedTransaction.srcUserID, authorizedTransaction.amount)
 
 	return &emptypb.Empty{}, nil
 }
