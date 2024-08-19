@@ -6,7 +6,7 @@ CREATE DATABASE money_movement;
 
 GRANT ALL PRIVILEGES ON money_movement.* TO 'money_movement_user'@'localhost';
 
-USER money_movement;
+USER money_movement_user;
 
 DROP TABLE IF EXISTS wallets;
 CREATE TABLE wallets (

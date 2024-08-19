@@ -6,7 +6,7 @@ CREATE DATABASE auth;
 
 GRANT ALL PRIVILEGES ON auth.* TO 'auth_user'@'localhost';
 
-USER auth;
+USER auth_user;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
