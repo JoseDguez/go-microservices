@@ -1,12 +1,12 @@
 DROP USER IF EXISTS 'ledger_user'@'localhost';
-CREATE USER 'ledger_user'@'localhost' IDENTIFIED BY 'Admin123';
+CREATE USER 'ledger_user'@'%' IDENTIFIED BY 'Admin123';
 
 DROP DATABASE IF EXISTS ledger;
 CREATE DATABASE ledger;
 
 GRANT ALL PRIVILEGES ON ledger.* TO 'ledger_user'@'localhost';
 
-USER ledger_user;
+USE ledger;
 
 DROP TABLE IF EXISTS ledger;
 CREATE TABLE ledger (

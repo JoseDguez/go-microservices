@@ -1,12 +1,12 @@
-DROP USER IF EXISTS 'money_movement_user'@'localhost';
-CREATE USER 'money_movement_user'@'localhost' IDENTIFIED BY 'Admin123';
+DROP USER IF EXISTS 'money_movement_user'@'%';
+CREATE USER 'money_movement_user'@'%' IDENTIFIED BY 'Admin123';
 
 DROP DATABASE IF EXISTS money_movement;
 CREATE DATABASE money_movement;
 
-GRANT ALL PRIVILEGES ON money_movement.* TO 'money_movement_user'@'localhost';
+GRANT ALL PRIVILEGES ON money_movement.* TO 'money_movement_user'@'%';
 
-USER money_movement_user;
+USE money_movement;
 
 DROP TABLE IF EXISTS wallets;
 CREATE TABLE wallets (

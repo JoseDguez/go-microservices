@@ -1,12 +1,12 @@
-DELETE USER IF EXISTS 'auth_user'@'localhost';
-CREATE USER 'auth_user'@'localhost' IDENTIFIED BY 'Admin123';
+DROP USER IF EXISTS 'auth_user'@'%';
+CREATE USER 'auth_user'@'%' IDENTIFIED BY 'Admin123';
 
 DROP DATABASE IF EXISTS auth;
 CREATE DATABASE auth;
 
-GRANT ALL PRIVILEGES ON auth.* TO 'auth_user'@'localhost';
+GRANT ALL PRIVILEGES ON auth.* TO 'auth_user'@'%';
 
-USER auth_user;
+USE auth;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
