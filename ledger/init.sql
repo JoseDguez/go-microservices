@@ -1,10 +1,10 @@
-DROP USER IF EXISTS 'ledger_user'@'localhost';
+DROP USER IF EXISTS 'ledger_user'@'%';
 CREATE USER 'ledger_user'@'%' IDENTIFIED BY 'Admin123';
 
 DROP DATABASE IF EXISTS ledger;
 CREATE DATABASE ledger;
 
-GRANT ALL PRIVILEGES ON ledger.* TO 'ledger_user'@'localhost';
+GRANT ALL PRIVILEGES ON ledger.* TO 'ledger_user'@'%';
 
 USE ledger;
 
