@@ -7,15 +7,14 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/JoseDguez/go-microservices/internal/ledger"
 	"log"
+	"os"
 	"sync"
 )
 
 const (
-	dbDriver   = "mysql"
-	dbUser     = "ledger_user"
-	dbPassword = "Admin123"
-	dbName     = "ledger"
-	topic      = "ledger"
+	dbDriver = "mysql"
+	dbName   = "ledger"
+	topic    = "ledger"
 )
 
 var (
@@ -32,10 +31,14 @@ type LedgerMsg struct {
 }
 
 func main() {
+	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
 	var err error
 
+	dbUser := os.Getenv("MYSQL_USERNAME")
+	dbPassword := os.Getenv("MYSQL_PASSWORD")
+
 	// Connect to the database
-	dsn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s", dbUser, dbPassword, dbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(mysql-ledger:3306)/%s", dbUser, dbPassword, dbName)
 
 	db, err = sql.Open(dbDriver, dsn)
 	if err != nil {
@@ -56,7 +59,7 @@ func main() {
 
 	done := make(chan struct{})
 
-	consumer, err := sarama.NewConsumer([]string{"localhost:9092"}, sarama.NewConfig())
+	consumer, err := sarama.NewConsumer([]string{"my-cluster-kafka-bootstrap:9092"}, sarama.NewConfig())
 	if err != nil {
 		log.Fatalf("Failed to start Sarama consumer: %v", err)
 	}

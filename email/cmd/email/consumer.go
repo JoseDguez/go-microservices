@@ -5,6 +5,7 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/JoseDguez/go-microservices/internal/email"
 	"log"
+	"os"
 	"sync"
 )
 
@@ -18,9 +19,10 @@ type EmailMsg struct {
 }
 
 func main() {
+	sarama.Logger = log.New(os.Stdout, "[sarama] ", log.LstdFlags)
 	done := make(chan struct{})
 
-	consumer, err := sarama.NewConsumer([]string{"localhost:9092"}, sarama.NewConfig())
+	consumer, err := sarama.NewConsumer([]string{"my-cluster-kafka-bootstrap:9092"}, sarama.NewConfig())
 	if err != nil {
 		log.Fatalf("Failed to start Sarama consumer: %v", err)
 	}
