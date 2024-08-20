@@ -13,7 +13,7 @@ CREATE TABLE wallets (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
     wallet_type VARCHAR(255) NOT NULL,
-    INDEX(user_id),
+    INDEX(user_id)
 );
 
 DROP TABLE IF EXISTS accounts;
@@ -22,7 +22,7 @@ CREATE TABLE accounts (
     cents INT NOT NULL DEFAULT 0,
     account_type VARCHAR(255) NOT NULL,
     wallet_id INT NOT NULL,
-    FOREIGN KEY (wallet_id) REFERENCES wallet(id)
+    FOREIGN KEY (wallet_id) REFERENCES wallets(id)
 );
 
 DROP TABLE IF EXISTS transactions;
@@ -39,7 +39,7 @@ CREATE TABLE transactions (
     dst_account_type VARCHAR(255) NOT NULL,
     final_dst_wallet_id INT NOT NULL,
     amount INT NOT NULL,
-    INDEX(pid),
+    INDEX(pid)
 );
 
 -- customer and merchant wallets
