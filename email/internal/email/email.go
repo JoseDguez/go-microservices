@@ -3,18 +3,19 @@ package email
 import (
 	"fmt"
 	"net/smtp"
+	"os"
 )
 
 func Send(target string, orderID string) error {
-	senderEmail := "email@gmail.com"
-	senderPassword := "password"
+	senderEmail := os.Getenv("SENDER_EMAIL")
+	senderPassword := os.Getenv("SENDER_PASSWORD")
 
 	recipientEmail := target
 
 	message := []byte(fmt.Sprintf("Subject: Payment Processed!\nProcess ID: %s\n", orderID))
 
-	smtpServer := "smtp.gmail.com"
-	smtpPort := 587
+	smtpServer := "sandbox.smtp.mailtrap.io"
+	smtpPort := 2525
 
 	creds := smtp.PlainAuth("", senderEmail, senderPassword, smtpServer)
 
