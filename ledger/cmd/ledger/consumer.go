@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/IBM/sarama"
 	"github.com/JoseDguez/go-microservices/internal/ledger"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"sync"

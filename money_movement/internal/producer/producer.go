@@ -27,7 +27,9 @@ type LedgerMsg struct {
 }
 
 func SendCaptureMessage(pid string, userID string, amount int64) {
-	producer, err := sarama.NewSyncProducer([]string{"my-cluster-kafka-bootstrap:9092"}, sarama.NewConfig())
+	saramaConfig := sarama.NewConfig()
+	saramaConfig.Producer.Return.Successes = true
+	producer, err := sarama.NewSyncProducer([]string{"my-cluster-kafka-bootstrap:9092"}, saramaConfig)
 	if err != nil {
 		log.Println("Failed to start Sarama producer in SendCaptureMessage:", err)
 		return
