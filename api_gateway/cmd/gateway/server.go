@@ -32,7 +32,7 @@ func main() {
 
 	authClient = authpb.NewAuthServiceClient(authConn)
 
-	mmConn, err := grpc.Dial("money_movement:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	mmConn, err := grpc.Dial("money-movement:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,6 +48,12 @@ func main() {
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/customer/payment/authorize", customerPaymentAuthorize)
 	http.HandleFunc("/customer/payment/capture", customerPaymentCapture)
+
+	log.Println("Starting server on :8080")
+	err = http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
