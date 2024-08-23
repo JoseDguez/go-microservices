@@ -14,13 +14,13 @@ func Send(target string, orderID string) error {
 
 	message := []byte(fmt.Sprintf("Subject: Payment Processed!\nProcess ID: %s\n", orderID))
 
-	smtpServer := "sandbox.smtp.mailtrap.io"
-	smtpPort := 2525
+	smtpServer := os.Getenv("EMAIL_HOST")
+	smtpPort := os.Getenv("EMAIL_PORT")
 
-	creds := smtp.PlainAuth("", senderEmail, senderPassword, smtpServer)
+	credentials := smtp.PlainAuth("", senderEmail, senderPassword, smtpServer)
 
-	smtpAddress := fmt.Sprintf("%s:%d", smtpServer, smtpPort)
-	err := smtp.SendMail(smtpAddress, creds, senderEmail, []string{recipientEmail}, message)
+	smtpAddress := fmt.Sprintf("%s:%s", smtpServer, smtpPort)
+	err := smtp.SendMail(smtpAddress, credentials, senderEmail, []string{recipientEmail}, message)
 	if err != nil {
 		return err
 	}

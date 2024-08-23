@@ -23,12 +23,7 @@ func NewAuthImplementation(db *sql.DB) *Implementation {
 }
 
 func (this *Implementation) GetToken(ctx context.Context, credentials *pb.Credentials) (*pb.Token, error) {
-	type user struct {
-		userID   string
-		password string
-	}
-
-	var u user
+	var u User
 
 	stmt, err := this.db.Prepare("SELECT user_id, password FROM users WHERE user_id = ? AND password = ?")
 	if err != nil {
@@ -83,10 +78,6 @@ func createJWT(userID string) (string, error) {
 }
 
 func validateJWT(signedToken string, key []byte) (string, error) {
-	type MyClaims struct {
-		jwt.RegisteredClaims
-	}
-
 	parsedToken, err := jwt.ParseWithClaims(signedToken, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})

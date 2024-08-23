@@ -178,8 +178,8 @@ func (this *Implementation) Capture(ctx context.Context, capturePayload *pb.Capt
 	return &emptypb.Empty{}, nil
 }
 
-func fetchWallet(tx *sql.Tx, userID string) (wallet, error) {
-	var w wallet
+func fetchWallet(tx *sql.Tx, userID string) (Wallet, error) {
+	var w Wallet
 
 	stmt, err := tx.Prepare("SELECT id, user_id, wallet_type FROM wallets WHERE user_id = ?")
 	if err != nil {
@@ -189,7 +189,7 @@ func fetchWallet(tx *sql.Tx, userID string) (wallet, error) {
 	err = stmt.QueryRow(userID).Scan(&w.ID, &w.userID, &w.walletType)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return w, status.Error(codes.InvalidArgument, "wallet not found")
+			return w, status.Error(codes.InvalidArgument, "Wallet not found")
 		}
 		return w, status.Error(codes.Internal, err.Error())
 	}
@@ -197,8 +197,8 @@ func fetchWallet(tx *sql.Tx, userID string) (wallet, error) {
 	return w, nil
 }
 
-func findWallet(tx *sql.Tx, walletID int32) (wallet, error) {
-	var w wallet
+func findWallet(tx *sql.Tx, walletID int32) (Wallet, error) {
+	var w Wallet
 
 	stmt, err := tx.Prepare("SELECT id, user_id, wallet_type FROM wallets WHERE id = ?")
 	if err != nil {
@@ -208,7 +208,7 @@ func findWallet(tx *sql.Tx, walletID int32) (wallet, error) {
 	err = stmt.QueryRow(walletID).Scan(&w.ID, &w.userID, &w.walletType)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return w, status.Error(codes.InvalidArgument, "wallet not found")
+			return w, status.Error(codes.InvalidArgument, "Wallet not found")
 		}
 		return w, status.Error(codes.Internal, err.Error())
 	}
@@ -216,8 +216,8 @@ func findWallet(tx *sql.Tx, walletID int32) (wallet, error) {
 	return w, nil
 }
 
-func fetchAccount(tx *sql.Tx, walletID int32, accountType string) (account, error) {
-	var a account
+func fetchAccount(tx *sql.Tx, walletID int32, accountType string) (Account, error) {
+	var a Account
 
 	stmt, err := tx.Prepare("SELECT id, cents, account_type, wallet_id FROM accounts WHERE wallet_id = ? AND account_type = ?")
 	if err != nil {
@@ -227,7 +227,7 @@ func fetchAccount(tx *sql.Tx, walletID int32, accountType string) (account, erro
 	err = stmt.QueryRow(walletID, accountType).Scan(&a.ID, &a.cents, &a.accountType, &a.walletID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return a, status.Error(codes.InvalidArgument, "account not found")
+			return a, status.Error(codes.InvalidArgument, "Account not found")
 		}
 		return a, status.Error(codes.Internal, err.Error())
 	}
@@ -235,7 +235,7 @@ func fetchAccount(tx *sql.Tx, walletID int32, accountType string) (account, erro
 	return a, nil
 }
 
-func transfer(tx *sql.Tx, srcAccount account, dstAccount account, amount int64) error {
+func transfer(tx *sql.Tx, srcAccount Account, dstAccount Account, amount int64) error {
 	if srcAccount.cents < amount {
 		return status.Error(codes.InvalidArgument, "insufficient funds")
 	}
@@ -261,7 +261,7 @@ func transfer(tx *sql.Tx, srcAccount account, dstAccount account, amount int64) 
 	return nil
 }
 
-func createTransaction(tx *sql.Tx, pid string, srcAccount account, dstAccount account, srcWallet wallet, dstWallet wallet, finalDstWallet wallet, amount int64) error {
+func createTransaction(tx *sql.Tx, pid string, srcAccount Account, dstAccount Account, srcWallet Wallet, dstWallet Wallet, finalDstWallet Wallet, amount int64) error {
 	stmt, err := tx.Prepare(insertTransactionQuery)
 	if err != nil {
 		return status.Error(codes.Internal, err.Error())
@@ -285,8 +285,8 @@ func createTransaction(tx *sql.Tx, pid string, srcAccount account, dstAccount ac
 	return nil
 }
 
-func fetchTransaction(tx *sql.Tx, pid string) (transaction, error) {
-	var t transaction
+func fetchTransaction(tx *sql.Tx, pid string) (Transaction, error) {
+	var t Transaction
 
 	stmt, err := tx.Prepare(selectTransactionQuery)
 	if err != nil {
@@ -296,7 +296,7 @@ func fetchTransaction(tx *sql.Tx, pid string) (transaction, error) {
 	err = stmt.QueryRow(pid).Scan(&t.ID, &t.pid, &t.srcUserID, &t.dstUserID, &t.srcAccountWalletID, &t.dstAccountWalletID, &t.srcAccountID, &t.dstAccountID, &t.srcAccountType, &t.dstAccountType, &t.finalDstMerchantWalletID, &t.amount)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return t, status.Error(codes.InvalidArgument, "transaction not found")
+			return t, status.Error(codes.InvalidArgument, "Transaction not found")
 		}
 		return t, status.Error(codes.Internal, err.Error())
 	}

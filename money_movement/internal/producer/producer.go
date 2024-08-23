@@ -13,19 +13,6 @@ const (
 	ledgerTopic = "ledger"
 )
 
-type EmailMsg struct {
-	OrderID string `json:"order_id"`
-	UserID  string `json:"user_id"`
-}
-
-type LedgerMsg struct {
-	OrderID   string `json:"order_id"`
-	UserID    string `json:"user_id"`
-	Amount    int64  `json:"amount"`
-	Operation string `json:"operation"`
-	Date      string `json:"date"`
-}
-
 func SendCaptureMessage(pid string, userID string, amount int64) {
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Producer.Return.Successes = true

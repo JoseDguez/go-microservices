@@ -19,7 +19,7 @@ var (
 )
 
 func main() {
-	authConn, err := grpc.Dial("auth:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.NewClient("auth:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func main() {
 
 	authClient = authpb.NewAuthServiceClient(authConn)
 
-	mmConn, err := grpc.Dial("money-movement:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	mmConn, err := grpc.NewClient("money-movement:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -103,14 +103,7 @@ func customerPaymentAuthorize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type authorizePayload struct {
-		CustomerWalletUserId string `json:"customer_wallet_user_id"`
-		MerchantWalletUserId string `json:"merchant_wallet_user_id"`
-		Cents                int64  `json:"cents"`
-		Currency             string `json:"currency"`
-	}
-
-	var payload authorizePayload
+	var payload AuthorizePayload
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -137,11 +130,7 @@ func customerPaymentAuthorize(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type authorizeResponse struct {
-		Pid string `json:"pid"`
-	}
-
-	response := authorizeResponse{
+	response := AuthorizeResponse{
 		Pid: ar.Pid,
 	}
 
@@ -180,11 +169,7 @@ func customerPaymentCapture(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type capturePayload struct {
-		Pid string `json:"pid"`
-	}
-
-	var payload capturePayload
+	var payload CapturePayload
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

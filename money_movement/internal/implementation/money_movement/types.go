@@ -1,19 +1,19 @@
 package money_movement
 
-type wallet struct {
+type Wallet struct {
 	ID         int32
 	userID     string
 	walletType string
 }
 
-type account struct {
+type Account struct {
 	ID          int32
 	cents       int64
 	accountType string
 	walletID    int32
 }
 
-type transaction struct {
+type Transaction struct {
 	ID                       int32
 	pid                      string
 	srcUserID                string
